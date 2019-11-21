@@ -1,0 +1,31 @@
+		Kako uraditi postavke GitHub repository korištenjem NetBeans IDE ?
+Što ću vam pokazati:
+1. Kreirat ćemo novi Java projekat koji će biti "push-an" na GitHub(bitBucket)
+2. Inicijalizaciju Git repository u kreirani projekat
+3. "Push" projekta na GitHub(bitBucket)
+
+1. Kreiramo Java SE projekat
+2. Inicijalizacija Git repository u upravo kreiranom projektu u nasem IDE 
+NetBeans IDE-> Menu -> Team -> Git -> Initialize repository -> DialogBox gdje će
+inicijalizovan i povezan sa git OK -> .... Menu -> Window -> Output
+
+git init /home/username/NetBeansProjects/JavCoreProgrammingGrupa2 
+
+
+Ukoliko smo samo kliknuli OK i nismo mijenjali putanju naš git subfolder je kreiran u 
+našem projektu. Git će pokrenuti tzv. verzionisanje svih fajlova u našem projektu 
+.java fajlova i ostalih
+
+ Šta je sljedeći korak ???
+
+Programiramo. Kreiramo source kod. SOurce kod se nalazi src paketu u .java fajlovima.
+
+Nakon što uradimo izmjene. Kreiramo mnošvo Java klasa..
+COMMIT 
+Desni klik na projekat -> git -> commit 
+
+3. "Pushanje" projekta i projektnih fajlova na GitHub(za ovaj korak nam treba da smo registrovani 
+na taj repository, u našem slučaju GitHub)
+
+Kreiram repository i dobili URL na kojem se nalazi naš repository.
+https://github.com/emirPuskaITAkademija/JavaCoreProgrammingGrupa2.git
