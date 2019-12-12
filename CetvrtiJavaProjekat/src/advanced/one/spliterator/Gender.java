@@ -1,7 +1,7 @@
 package advanced.one.spliterator;
 
 public enum Gender {
-    MALE("Muski"), FEMALE("Zenski"), TRANS("Srednji");
+    FEMALE("Zenski"),MALE("Muski"),  TRANS("Srednji");
 
     private String name;
 
