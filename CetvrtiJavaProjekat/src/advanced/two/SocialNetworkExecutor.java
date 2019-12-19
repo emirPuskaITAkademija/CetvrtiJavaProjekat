@@ -13,7 +13,7 @@ public class SocialNetworkExecutor {
         Function<Person, LocalDate> transformerIzPersonString = p->p.getBirthday();
         listOfPersons.stream()//1. 
                 .filter(p -> p.getGender().equals(Gender.FEMALE))//2.
-                .map(transformerIzPersonString)//2.
+                .map(p->p.getBirthday())//2.
                 .forEach(name -> System.out.println(name));//3.
     }
 }
