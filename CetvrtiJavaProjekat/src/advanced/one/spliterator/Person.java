@@ -1,12 +1,13 @@
 package advanced.one.spliterator;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Person implements Comparable<Person> {
+public class Person implements Comparable<Person>{
 
     private final String name;
     private final String surname;
