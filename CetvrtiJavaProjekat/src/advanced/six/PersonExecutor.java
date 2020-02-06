@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 //2. Method referenciranje -> nekada lamda ne radi ništa drugo osim što poziva neku metodu
 //-> referenciramo se na metodu ::
