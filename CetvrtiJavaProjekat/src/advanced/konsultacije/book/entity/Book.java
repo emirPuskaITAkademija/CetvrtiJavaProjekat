@@ -1,7 +1,7 @@
 package advanced.konsultacije.book.entity;
 
 import java.sql.Date;
-
+//DTO Domain model
 public class Book {
 
     private final Integer id;

@@ -11,7 +11,7 @@ import java.util.List;
 
 public class DaoExecutor {
 
-    public static final String URL = "jdbc:mysql://localhost:3306/socialnetwork";
+    public static final String URL = "jdbc:mysql://localhost:3309/social";
     public static final String USERNAME = "root";
     public static final String PASSWORD = "";
 

@@ -7,10 +7,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+//1. Connection 
+//2. Statement, PreparedStatement(Callable) -> connection
+//3. ResultSet 
 
 public class BookDAO implements Dao<Book> {
 
-    private Connection connection;
+    private final Connection connection;
 
     public BookDAO(Connection connection) {
         this.connection = connection;
@@ -45,15 +48,21 @@ public class BookDAO implements Dao<Book> {
 
     @Override
     public void save(Book entity) throws SQLException {
-        
+
+        //java.sql.Date
+        //java.util.Date
+        //java.time.LocalDate
         String sqlInsertStatement = "INSERT INTO book (`bookName`, `authorName`, `publisher`, `publishingDate`)\n"
                 + "VALUES(?, ?, ?, ?)";
-        PreparedStatement statement = connection.prepareStatement(sqlInsertStatement);
-        statement.setString(1, entity.getBookName());
-        statement.setString(2, entity.getAuthorName());
-        statement.setString(3, entity.getPublisher());
-        statement.setDate(4, entity.getPublishingDate());
-        statement.executeUpdate();
+        try (PreparedStatement statement = connection.prepareStatement(sqlInsertStatement)) {
+            statement.setString(1, entity.getBookName());
+            statement.setString(2, entity.getAuthorName());
+            statement.setString(3, entity.getPublisher());
+            statement.setDate(4, entity.getPublishingDate());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @Override

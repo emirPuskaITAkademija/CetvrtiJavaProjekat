@@ -71,6 +71,12 @@ public class BookFrame extends javax.swing.JFrame {
             }
         });
 
+        publisherDatePicker.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                publisherDatePickerActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -80,12 +86,12 @@ public class BookFrame extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(publisherDatePicker, javax.swing.GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(publisherDatePicker, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addGap(18, 18, 18)
-                        .addComponent(publisherTextField))
+                        .addComponent(publisherTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
@@ -116,11 +122,11 @@ public class BookFrame extends javax.swing.JFrame {
                         .addGap(24, 24, 24)
                         .addComponent(jLabel3))
                     .addComponent(publisherTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(45, 45, 45)
+                .addGap(41, 41, 41)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(publisherDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 51, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
                 .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -133,22 +139,33 @@ public class BookFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_authorTextFieldActionPerformed
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
-        LocalDate publishingDate = publisherDatePicker.getDate()
-                .toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate();
-        try(Connection connection = DriverManager.getConnection(DaoExecutor.URL, DaoExecutor.USERNAME, DaoExecutor.PASSWORD)){
+
+        //BAD Approach
+        //1. Performans-> umjesto otvaranja i zatvaranja konekcije kada korisnik klikne SAVE bolje je koristit Connection pool
+        //2. setAutocommit na false(default:true)
+        try (Connection connection = DriverManager.getConnection(DaoExecutor.URL, DaoExecutor.USERNAME, DaoExecutor.PASSWORD)) {
+            //connection.setAutoCommit(false);
+            java.util.Date date = publisherDatePicker.getDate();
+            LocalDate publishingLocalDate = date
+                    .toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+            Date sqlDate = Date.valueOf(publishingLocalDate);
             Book bookEntity = new Book(null,
-                    bookNameTextField.getText(), 
-                    authorTextField.getText(), 
-                    publisherTextField.getText(), 
-                    Date.valueOf(publishingDate));
+                    bookNameTextField.getText(),
+                    authorTextField.getText(),
+                    publisherTextField.getText(),
+                    sqlDate);
             BookDAO bookDAO = new BookDAO(connection);
             bookDAO.save(bookEntity);
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.err.println(e.getMessage());
         }
     }//GEN-LAST:event_saveButtonActionPerformed
+
+    private void publisherDatePickerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_publisherDatePickerActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_publisherDatePickerActionPerformed
 
     /**
      * @param args the command line arguments
