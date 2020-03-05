@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 //1. Connection 
 //2. Statement, PreparedStatement(Callable) -> connection
@@ -21,7 +22,7 @@ public class BookDAO implements Dao<Book> {
 
     @Override
     public List<Book> getAll() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new ArrayList<>();
     }
 
     @Override

@@ -3,6 +3,7 @@ package gui.three;
 import gui.two.RadioButtonPanel;
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.net.URL;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
@@ -14,6 +15,13 @@ import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
 
+/**
+ * 1. JFrame 2. Controls -> JButton, JComboBox, JCheckBox.. 3. LayoutManager
+ *
+ * - Programiraj u interfejs a ne u konkretnu klasu
+ *
+ * @author Grupa2
+ */
 public class ComboBoxPicturePanel extends JPanel {
 
     private ImageIcon[] images;
@@ -22,19 +30,22 @@ public class ComboBoxPicturePanel extends JPanel {
     public ComboBoxPicturePanel() {
         super(new BorderLayout());
         images = new ImageIcon[petStrings.length];
-        Integer[] imageNumberArray = new Integer[petStrings.length];
-        for(int i = 0; i<petStrings.length; i++){
-            imageNumberArray[i] = i;
+        Integer[] intArray = new Integer[petStrings.length];
+        for (int i = 0; i < petStrings.length; i++) {
+            intArray[i] = i;
             images[i] = createImageIcon(petStrings[i]);
         }
-        JComboBox<Integer> petList = new JComboBox<>();
-        petList.setRenderer(new ComboBoxRenderer());
-        add(petList, BorderLayout.PAGE_START);
+        JComboBox<Integer> petComboBox = new JComboBox<>(intArray);
+        ComboBoxRenderer renderer = new ComboBoxRenderer();
+        renderer.setPreferredSize(new Dimension(200, 130));
+        petComboBox.setRenderer(renderer);
+        add(petComboBox, BorderLayout.PAGE_START);
+        setOpaque(true);
     }
 
     public ImageIcon createImageIcon(String pictureName) {
-        String fileName = pictureName + ".gif";//Bird.gif
-        URL imageURL = RadioButtonPanel.class.getResource(fileName);
+        String fileName = pictureName + ".gif";//Bird.gif, Cat.gif, Dog.gif
+        URL imageURL = ComboBoxPicturePanel.class.getResource(fileName);
         System.out.println(imageURL);
         if (imageURL != null) {
             return new ImageIcon(imageURL);
@@ -44,39 +55,28 @@ public class ComboBoxPicturePanel extends JPanel {
         }
     }
 
-    class ComboBoxRenderer extends JLabel implements ListCellRenderer<Integer> {
+    private class ComboBoxRenderer extends JLabel implements ListCellRenderer<Integer> {
 
         @Override
         public Component getListCellRendererComponent(JList<? extends Integer> list, Integer value, int index, boolean isSelected, boolean cellHasFocus) {
-            int selectedIndex = value;
-            if(isSelected){
-                
+            //index parametar nije uvijek validan
+            if (isSelected) {
+                setBackground(list.getSelectionBackground());
+                setForeground(list.getSelectionForeground());
+            } else {
+                setBackground(list.getBackground());
+                setForeground(list.getForeground());
             }
-            
-            ImageIcon imageIcon = images[index];
-            String itemText = petStrings[index];
-            setIcon(imageIcon);
-            setText(itemText);
+            ImageIcon imageIcon = images[value];
+            String itemText = petStrings[value];
+            if (imageIcon != null) {
+                setIcon(imageIcon);
+                setText(itemText);
+            }else{
+                setText("Ne postoji slika");
+            }
+
             return this;
         }
-    }
-    
-        private static void createAndShowGUI() {
-        //1. PROZOR ili JFRAME
-        JFrame frame = new JFrame("Combo box editabel");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        //2. kreirati kontrole i pobacati kako nam kaže neki manager LayoutManager
-        JComponent comboBoxPanel = new ComboBoxPicturePanel();
-        comboBoxPanel.setOpaque(true);
-        frame.setContentPane(comboBoxPanel);
-
-        //3. prikazati prozor
-        frame.pack();
-        frame.setVisible(true);
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> createAndShowGUI());
     }
 }
