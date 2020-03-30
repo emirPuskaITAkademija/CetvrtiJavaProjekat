@@ -1,7 +1,8 @@
-package gui.five;
+package gui.six.swing;
 
+import gui.five.PlayerInfo;
+import gui.five.PlayerInfoDao;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.util.Vector;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -12,13 +13,17 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
+//Pattern
+//Compile
+//regex -> Regular expressions
 
-public class PlayerInfoPanel extends JPanel {
+public class PlayerInfoPanel extends JPanel implements TableModelListener {
 
     private final PlayerInfoDao playerDao;
-    private final Vector<Vector<Object>> data;
-    private final Vector<String> columnNames;
     private JCheckBox rowCheckBox;
     private JCheckBox columnCheckBox;
     private ButtonGroup buttonGroup;
@@ -27,14 +32,12 @@ public class PlayerInfoPanel extends JPanel {
     public PlayerInfoPanel(PlayerInfoDao playerDao) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.playerDao = playerDao;
-        this.columnNames = playerDao.getColumnNames();
-        this.data = getAll();
         //tabela sa scroll pane
-        JTable table = new JTable(this.data, this.columnNames);
-        OurTableModel tableModel = new OurTableModel();
-        table.setModel(tableModel);
+        OurTableModel tableModel = new OurTableModel(playerDao.getColumnNames(), getAll());
+        JTable table = new JTable(tableModel);
         table.setPreferredScrollableViewportSize(new Dimension(500, 70));
         table.setFillsViewportHeight(true);
+        table.getModel().addTableModelListener(this);
         JScrollPane scrollPane = new JScrollPane(table);
         add(scrollPane);
         //
@@ -56,21 +59,45 @@ public class PlayerInfoPanel extends JPanel {
     }
 
     private Vector<Vector<Object>> getAll() {
-        Vector<Vector<Object>> data = new Vector<>();
+        Vector<Vector<Object>> dataRow = new Vector<>();
         for (PlayerInfo playerInfo : playerDao.getAll()) {
-            Vector<Object> vectorRow = new Vector<>();
-            vectorRow.addElement(playerInfo.getId());
-            vectorRow.addElement(playerInfo.getFirstName());
-            vectorRow.addElement(playerInfo.getLastName());
-            vectorRow.addElement(playerInfo.getSport());
-            vectorRow.addElement(playerInfo.getOfYears());
-            vectorRow.addElement(playerInfo.getVegetarian());
-            data.addElement(vectorRow);
+            Vector<Object> row = new Vector<>();
+            row.addElement(playerInfo.getId());
+            row.addElement(playerInfo.getFirstName());
+            row.addElement(playerInfo.getLastName());
+            row.addElement(playerInfo.getSport());
+            row.addElement(playerInfo.getOfYears());
+            row.addElement(playerInfo.getVegetarian());
+            dataRow.addElement(row);
         }
-        return data;
+        return dataRow;
+    }
+
+    @Override
+    public void tableChanged(TableModelEvent e) {
+        int row = e.getFirstRow();
+        int column = e.getColumn();
+        TableModel tableModel = (TableModel) e.getSource();
+        String columnName = tableModel.getColumnName(column);
+        Object data = tableModel.getValueAt(row, column);
+        System.out.println("Ime kolone: " + columnName);
+        System.out.println(data + " <------ podatak koji se promijenio");
     }
 
     private class OurTableModel extends AbstractTableModel {
+
+        private final Vector<String> columnNames;
+        private final Vector<Vector<Object>> data;
+
+        public OurTableModel(Vector<String> columnNames, Vector<Vector<Object>> data) {
+            this.columnNames = columnNames;
+            this.data = data;
+        }
+
+        @Override
+        public String getColumnName(int column) {
+            return columnNames.get(column);
+        }
 
         @Override
         public int getRowCount() {
@@ -95,12 +122,17 @@ public class PlayerInfoPanel extends JPanel {
         }
 
         @Override
-        public Class<?> getColumnClass(int columnIndex) {
+        public Class<? extends Object> getColumnClass(int columnIndex) {
             Class<?> clazz = getValueAt(0, columnIndex).getClass();
-            System.out.println(clazz.getName());
+            System.out.println(clazz);
             return getValueAt(0, columnIndex).getClass(); //To change body of generated methods, choose Tools | Templates.
         }
 
+        @Override
+        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+            Vector<Object> rowVector = data.get(rowIndex);
+            rowVector.remove(columnIndex);
+            rowVector.add(columnIndex, aValue);
+        }
     }
-
 }

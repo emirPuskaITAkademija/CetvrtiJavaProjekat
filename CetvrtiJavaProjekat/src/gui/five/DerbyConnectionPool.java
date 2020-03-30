@@ -1,5 +1,6 @@
 package gui.five;
 
+import gui.six.swing.ConnectionEnum;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -15,6 +16,10 @@ public class DerbyConnectionPool {
     private final String password;
     private final List<Connection> usedConnection;
     private final List<Connection> availableConnection;
+    
+    public DerbyConnectionPool() throws SQLException{
+        this(ConnectionEnum.URL.getValue(), ConnectionEnum.USERNAME.getValue(), ConnectionEnum.PASSWORD.getValue());
+    }
 
     public DerbyConnectionPool(String url, String username, String password) throws SQLException {
         this.url = url;
