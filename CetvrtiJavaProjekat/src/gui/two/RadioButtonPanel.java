@@ -1,13 +1,12 @@
 package gui.two;
 
-import gui.one.CheckBoxPanel;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.net.URL;
+import java.util.stream.Stream;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -16,69 +15,34 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.SwingUtilities;
-
+//DRY-Don't Repeat Yourself
+//Postoji princip: razdvojiti kreiranje objekata od njihovog korištenja
 public class RadioButtonPanel extends JPanel implements ActionListener {
 
-    static final String BIRD_NAME = "Bird";
-    static final String CAT_NAME = "Cat";
-    static final String DOG_NAME = "Dog";
-    static final String PIG_NAME = "Pig";
-    static final String RABBIT_NAME = "Rabbit";
-
     private final JLabel pictureLabel;
+    private final ButtonGroup buttonGroup;
+    private final JPanel buttonPanel;
 
     public RadioButtonPanel() {
         super(new BorderLayout());
-        //kreirati radio button
-        //PTICA BIRD
-        JRadioButton birdButton = new JRadioButton(BIRD_NAME);
-        birdButton.setMnemonic(KeyEvent.VK_B);
-        birdButton.setActionCommand(BIRD_NAME);
-        birdButton.setSelected(true);
-        //CAT ili mačka
-        JRadioButton catButton = new JRadioButton(CAT_NAME);
-        catButton.setMnemonic(KeyEvent.VK_C);
-        catButton.setActionCommand(CAT_NAME);
-        //DOG
-        JRadioButton dogButton = new JRadioButton(DOG_NAME);
-        dogButton.setMnemonic(KeyEvent.VK_D);
-        dogButton.setActionCommand(DOG_NAME);
-        //PIG
-        JRadioButton pigButton = new JRadioButton(PIG_NAME);
-        pigButton.setMnemonic(KeyEvent.VK_P);
-        pigButton.setActionCommand(PIG_NAME);
-        //RABBIT
-        JRadioButton rabbitButton = new JRadioButton(RABBIT_NAME);
-        rabbitButton.setMnemonic(KeyEvent.VK_R);
-        rabbitButton.setActionCommand(RABBIT_NAME);
-        //GRUPU RADIO BUTTON
-        ButtonGroup buttonGroup = new ButtonGroup();
-        buttonGroup.add(birdButton);
-        buttonGroup.add(catButton);
-        buttonGroup.add(dogButton);
-        buttonGroup.add(pigButton);
-        buttonGroup.add(rabbitButton);
-        //ACTION LISTENERS
-        birdButton.addActionListener(this);
-        catButton.addActionListener(this);
-        dogButton.addActionListener(this);
-        pigButton.addActionListener(this);
-        rabbitButton.addActionListener(this);
-
-        //PICTURE
-        pictureLabel = new JLabel(createImageIcon(BIRD_NAME));
-        Dimension dimension = new Dimension(187, 122);
-        pictureLabel.setPreferredSize(dimension);
-
-        JPanel radioButtonPanel = new JPanel(new GridLayout(0, 1));
-        radioButtonPanel.add(birdButton);
-        radioButtonPanel.add(catButton);
-        radioButtonPanel.add(dogButton);
-        radioButtonPanel.add(pigButton);
-        radioButtonPanel.add(rabbitButton);
-        
-        add(radioButtonPanel, BorderLayout.LINE_START);
+        buttonGroup = new ButtonGroup();
+        buttonPanel = new JPanel(new GridLayout(0, 1));
+        Stream.of(AnimalButtonEnum.values()).forEach(this::createRadioButton);
+        pictureLabel = new JLabel(createImageIcon(AnimalButtonEnum.BIRD.getName()));
+        pictureLabel.setPreferredSize(new Dimension(187, 122));
+        add(buttonPanel, BorderLayout.LINE_START);
         add(pictureLabel, BorderLayout.CENTER);
+    }
+
+    private JRadioButton createRadioButton(AnimalButtonEnum animalButton) {
+        JRadioButton radioButton = new JRadioButton(animalButton.getName());
+        radioButton.setMnemonic(animalButton.getMnemonic());
+        radioButton.setActionCommand(animalButton.getCommand());
+        radioButton.setSelected(animalButton.isSelected());
+        radioButton.addActionListener(this);
+        buttonGroup.add(radioButton);
+        buttonPanel.add(radioButton);
+        return radioButton;
     }
 
     @Override
@@ -99,24 +63,23 @@ public class RadioButtonPanel extends JPanel implements ActionListener {
             return null;
         }
     }
-    
-    private static void createAndShowGUI(){
+
+    private static void createAndShowGUI() {
         //1. PROZOR ili JFRAME
         JFrame frame = new JFrame("Radio button demonstration");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
+
         //2. kreirati kontrole i pobacati kako nam kaže neki manager LayoutManager
         JComponent radioButtonPanel = new RadioButtonPanel();
         radioButtonPanel.setOpaque(true);
         frame.setContentPane(radioButtonPanel);
-        
+
         //3. prikazati prozor
         frame.pack();
         frame.setVisible(true);
     }
-    
-   
+
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(()->createAndShowGUI());
+        SwingUtilities.invokeLater(() -> createAndShowGUI());
     }
 }
