@@ -15,6 +15,13 @@ import java.util.regex.Pattern;
  * <ol>
  * <li>Pattern -> regex(String)
  * <li> Matcher -> text po patternu koji smo ranije definirali testirati
+ * 
+ * <p>
+ * Zasto mozemo koristiti regularne izraze:
+ * <ol>
+ * <li>Mogu biti iskorišteni za pretragu
+ * <li>modifikaciju ili editovanje
+ * <li>manipulacije sa tekstom na osnovu regex i kreiranog pattern
  * @author Grupa2
  */
 public class RegexTester {

@@ -51,7 +51,6 @@ public class PlayerInfoDao implements Dao<PlayerInfo> {
                 columnNames.addElement(resultSetMetaData.getColumnName(i));
             }
             return columnNames;
-
         } catch (SQLException ex) {
             throw new RuntimeException(ex.getMessage());
         }
@@ -63,8 +62,16 @@ public class PlayerInfoDao implements Dao<PlayerInfo> {
     }
 
     @Override
-    public void update(PlayerInfo entity) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void update(PlayerInfo entity)  {
+        System.out.println(entity);
+        String sql = "UPDATE PLAYERINFO SET SPORT=? WHERE id=?";
+        try(PreparedStatement ps = connectionPool.getConnection().prepareStatement(sql)){
+            ps.setString(1, entity.getSport());
+            ps.setInt(2, entity.getId());
+            ps.execute();
+        }catch(SQLException e){
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @Override
